@@ -40,7 +40,7 @@ This project includes:
 ### 1. Build, Tag, and Push Docker Images
 
 Make sure you are logged in to Docker Hub:
-```bash
+bash
 docker login
 Build and push each image:
 
