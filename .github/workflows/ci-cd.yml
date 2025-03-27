@@ -4,39 +4,25 @@ on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Check Out Code
+        uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build and Test User Service
+      - name: Install Docker Compose
         run: |
-          cd user-service
-          docker build -t user-service .
-          # If you add tests later, run them here:
-          docker run --rm user-service python -m unittest discover || echo "No tests found"
-          cd ..
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose version
 
-      - name: Build and Test Order Service
-        run: |
-          cd order-service
-          docker build -t order-service .
-          docker run --rm order-service python -m unittest discover || echo "No tests found"
-          cd ..
-
-      - name: Build Docker Compose Services
+      - name: Build Docker Images
         run: docker-compose build
 
-      - name: Run Docker Compose
+      - name: Push Docker Images to Docker Hub
         run: |
-          docker-compose up -d
-          sleep 20
-          docker-compose down
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker-compose push
