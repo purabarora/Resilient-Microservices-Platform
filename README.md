@@ -46,15 +46,15 @@ Build and push each image:
 
 bash
 Copy
-# User Service
+## User Service
 docker build -t purabarora/user-service:latest ./user-service
 docker push purabarora/user-service:latest
 
-# Order Service
+## Order Service
 docker build -t purabarora/order-service:latest ./order-service
 docker push purabarora/order-service:latest
 
-# Chaos Monkey
+## Chaos Monkey
 docker build -t purabarora/chaos-monkey:latest ./chaos-monkey
 docker push purabarora/chaos-monkey:latest
 2. Running Locally with Docker Compose (Optional)
@@ -90,16 +90,16 @@ Use port forwarding to access ClusterIP services locally:
 
 bash
 Copy
-# User Service
+## User Service
 kubectl port-forward service/user-service 5000:5000
 
-# Order Service
+## Order Service
 kubectl port-forward service/order-service 5001:5001
 
-# Prometheus
+## Prometheus
 kubectl port-forward service/prometheus 9090:9090
 
-# Grafana
+## Grafana
 kubectl port-forward service/grafana 3000:3000
 CI/CD Pipeline
 This repository is integrated with GitHub Actions. The workflow file at .github/workflows/ci-cd.yml handles:
