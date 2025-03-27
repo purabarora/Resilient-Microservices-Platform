@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "5000:5000"
+    restart: always
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "5001:5001"
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    restart: always
+
+  chaos-monkey:
+    build: ./chaos-monkey
+    depends_on:
+      - user-service
+      - order-service
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: "no"

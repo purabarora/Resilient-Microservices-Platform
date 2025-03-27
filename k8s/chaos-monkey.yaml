@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: chaos-monkey
+spec:
+  template:
+    spec:
+      containers:
+        - name: chaos-monkey
+          image: purabarora/chaos-monkey:latest
+          # Ensure your chaos-monkey script is adapted to interact with Kubernetes
+          # For example, it might use the Kubernetes API to delete a random pod
+      restartPolicy: Never
+  backoffLimit: 4
