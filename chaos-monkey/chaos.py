@@ -1,19 +1,40 @@
+from kubernetes import client, config
 import random
 import time
-import subprocess
 
-# List of services to simulate a failure on
+# List of services to target
 services = ["user-service", "order-service"]
 
-# Wait for a random delay between 30 and 60 seconds
-delay = random.randint(30, 60)
-print(f"Chaos Monkey will strike in {delay} seconds...")
-time.sleep(delay)
+# Load Kubernetes configuration inside the cluster
+config.load_incluster_config()
 
-# Randomly choose a service to stop
-target = random.choice(services)
-print(f"Chaos Monkey is stopping the {target} container...")
+# Create Kubernetes API client
+v1 = client.CoreV1Api()
 
-# Execute the docker-compose command to stop the target container
-subprocess.run(["docker-compose", "stop", target])
-print(f"{target} container has been stopped.")
+def chaos_monkey():
+    print("Chaos Monkey will strike in 30 seconds...")
+    time.sleep(30)
+
+    # Choose a random service to kill
+    service_to_kill = random.choice(services)
+    print(f"Chaos Monkey is stopping a pod from {service_to_kill}...")
+
+    try:
+        # Get all pods for the selected service
+        pods = v1.list_namespaced_pod(namespace="default", label_selector=f"app={service_to_kill}").items
+
+        if pods:
+            # Choose a random pod to kill
+            pod_to_kill = random.choice(pods)
+            pod_name = pod_to_kill.metadata.name
+
+            # Delete the pod
+            v1.delete_namespaced_pod(name=pod_name, namespace="default")
+            print(f"✅ Pod {pod_name} deleted successfully!")
+        else:
+            print(f"⚠️ No pods found for {service_to_kill}.")
+    except Exception as e:
+        print(f"⚠️ Error stopping pod: {e}")
+
+if __name__ == "__main__":
+    chaos_monkey()
