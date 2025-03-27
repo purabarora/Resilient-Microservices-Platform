@@ -101,7 +101,8 @@ kubectl port-forward service/prometheus 9090:9090
 
 ## Grafana
 kubectl port-forward service/grafana 3000:3000
-CI/CD Pipeline
+
+## CI/CD Pipeline
 This repository is integrated with GitHub Actions. The workflow file at .github/workflows/ci-cd.yml handles:
 
 Building Docker images
